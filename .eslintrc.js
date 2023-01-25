@@ -16,6 +16,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: "module",
   },
+  ignorePatterns: ["*.test.ts", "coverage"],
   rules: {
     "import/prefer-default-export": "off",
     "jest/valid-title": "off",

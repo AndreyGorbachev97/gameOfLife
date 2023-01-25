@@ -13,34 +13,55 @@ export interface IGameView {
   onGameStateChange: (cb: (newState: boolean) => void) => void;
   onFieldSizeChange: (cb: (width: number, height: number) => void) => void;
   onSpeedChange: (cb: (speed: number) => void) => void;
-  // onAutoStop: (cb: () => void) => void;
+  onClearField: (cb: () => void) => void;
 }
 
 export class GameView implements IGameView {
   private htmlElement: HTMLElement;
-  private isRunning: boolean = false;
-  private gameStateChangeHanlder!: (newState: boolean) => void;
+
+  private isRunning = false;
+
+  private gameStateChangeHandler!: (newState: boolean) => void;
+
   private onFieldSizeChangeHandler!: (width: number, height: number) => void;
+
   private gameSpeedChangeHandler!: (speed: number | null) => void;
+
+  private gameClearFieldHandler!: () => void;
+
   private cellContainer: HTMLDivElement = document.createElement("div");
+
   // private cellClickHandler: (x: number, y: number) => void;
   constructor(el: HTMLElement) {
     const gameFieldView = document.createElement("div");
     const gameControlsView = document.createElement("div");
     const buttonStopped = document.createElement("button");
+    const buttonClear = document.createElement("button");
 
     gameFieldView.className = "gameField";
     gameControlsView.className = "gameControls";
 
+    buttonStopped.classList.add("btn");
     buttonStopped.classList.add("run-button");
     buttonStopped.classList.add("run-button--stopped");
     buttonStopped.innerHTML = "Play";
 
+    buttonClear.classList.add("btn");
+    buttonClear.classList.add("clear-button");
+    buttonClear.innerHTML = "Clear";
+
     buttonStopped.addEventListener("click", () => {
-      if (!this.gameStateChangeHanlder) {
+      if (!this.gameStateChangeHandler) {
         return;
       }
-      this.gameStateChangeHanlder(!this.isRunning);
+      this.gameStateChangeHandler(!this.isRunning);
+    });
+
+    buttonClear.addEventListener("click", () => {
+      if (!this.gameClearFieldHandler) {
+        return;
+      }
+      this.gameClearFieldHandler();
     });
 
     const inputRange = document.createElement("input");
@@ -80,6 +101,7 @@ export class GameView implements IGameView {
     gameFieldView.append(this.cellContainer);
 
     gameControlsView.append(buttonStopped);
+    gameControlsView.append(buttonClear);
     gameControlsView.append(inputWidth);
     gameControlsView.append(inputHeight);
     gameControlsView.append(inputRange);
@@ -91,8 +113,6 @@ export class GameView implements IGameView {
   }
 
   updateGameField(field: Cell[][]) {
-    // const gameFieldElement = this.cellContainer.querySelector(".gameField")
-    // gameFieldElement.innerHTML = "";
     this.cellContainer.innerHTML = "";
     for (let i = 0; i < field.length; i++) {
       const row = document.createElement("div");
@@ -108,12 +128,7 @@ export class GameView implements IGameView {
         }
         cell.setAttribute("data-x", `${j}`);
         cell.setAttribute("data-y", `${i}`);
-        // cell.addEventListener("click", () => {
-        //   if (this.cellClickHandler) {
-        //     this.cellClickHandler(j, i);
-        //   }
-        //   // i, j = y, x
-        // });
+
         row.append(cell);
       }
       this.cellContainer.append(row);
@@ -138,11 +153,13 @@ export class GameView implements IGameView {
 
     if (isRunning) {
       btn.className = "";
+      btn.classList.add("btn");
       btn.classList.add("run-button");
       btn.classList.add("run-button--runned");
       btn.innerHTML = "Stop";
     } else {
       btn.className = "";
+      btn.classList.add("btn");
       btn.classList.add("run-button");
       btn.classList.add("run-button--stopped");
       btn.innerHTML = "Play";
@@ -166,7 +183,11 @@ export class GameView implements IGameView {
   }
 
   public onGameStateChange(cb: (newState: boolean) => void) {
-    this.gameStateChangeHanlder = cb;
+    this.gameStateChangeHandler = cb;
+  }
+
+  public onClearField(cb: () => void) {
+    this.gameClearFieldHandler = cb;
   }
 
   public onFieldSizeChange(cb: (width: number, height: number) => void) {

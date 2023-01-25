@@ -17,6 +17,12 @@ describe("GameView", () => {
       expect(el.querySelector(".gameControls")).not.toBeNull();
     });
 
+    it("render buttons", () => {
+      new GameView(el);
+      expect(el.querySelector(".clear-button")).not.toBeNull();
+      expect(el.querySelector(".run-button")).not.toBeNull();
+    });
+
     it("has public methods", () => {
       const gameView = new GameView(el);
       expect(gameView.updateGameField).toBeInstanceOf(Function);
@@ -66,37 +72,63 @@ describe("GameView", () => {
       el.querySelector(".cell.cell--alive").dispatchEvent(
         new Event("click", {
           bubbles: true,
-        }),
+        })
       );
       expect(onCellClick).toHaveBeenCalledWith(0, 1);
       el.querySelectorAll(".cell.cell--dead")[1].dispatchEvent(
         new Event("click", {
           bubbles: true,
-        }),
+        })
       );
       expect(onCellClick).toHaveBeenCalledWith(1, 0);
     });
     it("renders correct game state on .updateGameState", () => {
-      expect(el.querySelector(".run-button.run-button--stopped")).not.toBeNull();
-      expect(el.querySelector(".run-button.run-button--stopped").innerHTML).toBe("Play");
+      expect(
+        el.querySelector(".run-button.run-button--stopped")
+      ).not.toBeNull();
+      expect(
+        el.querySelector(".run-button.run-button--stopped").innerHTML
+      ).toBe("Play");
       gameView.updateGameState({ isRunning: true, width: 3, height: 3 });
       expect(el.querySelector(".run-button.run-button--stopped")).toBeNull();
       expect(el.querySelector(".run-button.run-button--runned")).not.toBeNull();
-      expect(el.querySelector(".run-button.run-button--runned").innerHTML).toBe("Stop");
+      expect(el.querySelector(".run-button.run-button--runned").innerHTML).toBe(
+        "Stop"
+      );
       expect(
-        Number((el.querySelector("input[type='number'].field-size.field-size--width") as HTMLInputElement).value),
+        Number(
+          (el.querySelector(
+            "input[type='number'].field-size.field-size--width"
+          ) as HTMLInputElement).value
+        )
       ).toBe(3);
       expect(
-        Number((el.querySelector("input[type='number'].field-size.field-size--height") as HTMLInputElement).value),
+        Number(
+          (el.querySelector(
+            "input[type='number'].field-size.field-size--height"
+          ) as HTMLInputElement).value
+        )
       ).toBe(3);
       gameView.updateGameState({ isRunning: false, width: 5, height: 6 });
-      expect(el.querySelector(".run-button.run-button--stopped")).not.toBeNull();
-      expect(el.querySelector(".run-button.run-button--stopped").innerHTML).toBe("Play");
       expect(
-        Number((el.querySelector("input[type='number'].field-size.field-size--width") as HTMLInputElement).value),
+        el.querySelector(".run-button.run-button--stopped")
+      ).not.toBeNull();
+      expect(
+        el.querySelector(".run-button.run-button--stopped").innerHTML
+      ).toBe("Play");
+      expect(
+        Number(
+          (el.querySelector(
+            "input[type='number'].field-size.field-size--width"
+          ) as HTMLInputElement).value
+        )
       ).toBe(5);
       expect(
-        Number((el.querySelector("input[type='number'].field-size.field-size--height") as HTMLInputElement).value),
+        Number(
+          (el.querySelector(
+            "input[type='number'].field-size.field-size--height"
+          ) as HTMLInputElement).value
+        )
       ).toBe(6);
     });
     it("calls function from .onGameStateChange on control interaction", () => {
@@ -106,14 +138,14 @@ describe("GameView", () => {
       el.querySelector(".run-button.run-button--runned").dispatchEvent(
         new Event("click", {
           bubbles: true,
-        }),
+        })
       );
       expect(onGameStateChange).toHaveBeenCalledWith(false);
       gameView.updateGameState({ isRunning: false, width: 2, height: 1 });
       el.querySelector(".run-button.run-button--stopped").dispatchEvent(
         new Event("click", {
           bubbles: true,
-        }),
+        })
       );
       expect(onGameStateChange).toHaveBeenCalledWith(true);
     });
@@ -126,14 +158,18 @@ describe("GameView", () => {
         [22, 12],
         [1, 2],
       ].forEach(([width, height]) => {
-        (el.querySelector("input[type='number'].field-size.field-size--width") as HTMLInputElement).value = `${width}`;
         (el.querySelector(
-          "input[type='number'].field-size.field-size--height",
+          "input[type='number'].field-size.field-size--width"
+        ) as HTMLInputElement).value = `${width}`;
+        (el.querySelector(
+          "input[type='number'].field-size.field-size--height"
         ) as HTMLInputElement).value = `${height}`;
-        (el.querySelector("input[type='number'].field-size.field-size--width") as HTMLInputElement).dispatchEvent(
+        (el.querySelector(
+          "input[type='number'].field-size.field-size--width"
+        ) as HTMLInputElement).dispatchEvent(
           new Event("change", {
             bubbles: true,
-          }),
+          })
         );
         expect(onFieldSizeChange).toHaveBeenCalledWith(width, height);
       });
@@ -143,14 +179,18 @@ describe("GameView", () => {
         [104, 105],
         [106, 107],
       ].forEach(([width, height]) => {
-        (el.querySelector("input[type='number'].field-size.field-size--width") as HTMLInputElement).value = `${width}`;
         (el.querySelector(
-          "input[type='number'].field-size.field-size--height",
+          "input[type='number'].field-size.field-size--width"
+        ) as HTMLInputElement).value = `${width}`;
+        (el.querySelector(
+          "input[type='number'].field-size.field-size--height"
         ) as HTMLInputElement).value = `${height}`;
-        (el.querySelector("input[type='number'].field-size.field-size--height") as HTMLInputElement).dispatchEvent(
+        (el.querySelector(
+          "input[type='number'].field-size.field-size--height"
+        ) as HTMLInputElement).dispatchEvent(
           new Event("change", {
             bubbles: true,
-          }),
+          })
         );
         expect(onFieldSizeChange).toHaveBeenCalledWith(width, height);
       });
