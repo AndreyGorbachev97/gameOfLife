@@ -10,8 +10,10 @@ export interface IGameField {
 
 export class GameField implements IGameField {
   private field: Cell[][];
+
   private copyField: Cell[][];
-  constructor(width: number = 0, height: number = 1) {
+
+  constructor(width = 0, height = 1) {
     const result: Cell[][] = [];
     for (let i = 0; i < height; i++) {
       result.push([]);
@@ -41,21 +43,21 @@ export class GameField implements IGameField {
 
   // рождение или смерть
   private birthOrDeath(x: number, y: number) {
-    const field = this.field;
+    const { field } = this;
     // const field = this.field.map((row) => [...row]);
 
     this.field = field.map((row) => [...row]);
 
     let counter = 0;
     // проверка соседей
-    field[y - 1] && field[y - 1][x - 1] && counter++; // левый верхний угол
-    field[y - 1] && field[y - 1][x] && counter++; // вверх
-    field[y - 1] && field[y - 1][x + 1] && counter++; // правый верхний угол
-    field[y] && field[y][x + 1] && counter++; // справа
-    field[y + 1] && field[y + 1][x + 1] && counter++; // правый нижний угол
-    field[y + 1] && field[y + 1][x] && counter++; // снизу
-    field[y + 1] && field[y + 1][x - 1] && counter++; // левый нижний угол
-    field[y] && field[y][x - 1] && counter++; // слева
+    if (field[y - 1] && field[y - 1][x - 1]) counter++; // левый верхний угол
+    if (field[y - 1] && field[y - 1][x]) counter++; // вверх
+    if (field[y - 1] && field[y - 1][x + 1]) counter++; // правый верхний угол
+    if (field[y] && field[y][x + 1]) counter++; // справа
+    if (field[y + 1] && field[y + 1][x + 1]) counter++; // правый нижний угол
+    if (field[y + 1] && field[y + 1][x]) counter++; // снизу
+    if (field[y + 1] && field[y + 1][x - 1]) counter++; // левый нижний угол
+    if (field[y] && field[y][x - 1]) counter++; // слева
 
     const isAlive = field[y][x];
     // если с живой клеткой меньше 2 или больше 3 соседей, клетка умирает

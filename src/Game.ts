@@ -1,16 +1,17 @@
 import { IGameField } from "./GameField";
 import { IGameView } from "./GameView";
 
-export interface IGame {}
+export class Game {
+  private isRunning = false;
 
-export class Game implements IGame {
-  private isRunning: boolean = false;
-  private stepSizeMs: number = 1;
+  private stepSizeMs = 1;
+
   private timer: ReturnType<typeof setInterval>;
+
   constructor(
     private gameField: IGameField,
     private gameView: IGameView,
-    stepSizeMs: number = 1
+    stepSizeMs = 1
   ) {
     this.stepSizeMs = stepSizeMs;
     this.render();

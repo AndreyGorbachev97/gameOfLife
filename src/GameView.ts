@@ -18,12 +18,19 @@ export interface IGameView {
 
 export class GameView implements IGameView {
   private htmlElement: HTMLElement;
-  private isRunning: boolean = false;
+
+  private isRunning = false;
+
   private gameStateChangeHandler!: (newState: boolean) => void;
+
   private onFieldSizeChangeHandler!: (width: number, height: number) => void;
+
   private gameSpeedChangeHandler!: (speed: number | null) => void;
+
   private gameClearFieldHandler!: () => void;
+
   private cellContainer: HTMLDivElement = document.createElement("div");
+
   // private cellClickHandler: (x: number, y: number) => void;
   constructor(el: HTMLElement) {
     const gameFieldView = document.createElement("div");
