@@ -16,13 +16,16 @@ export class Game implements IGame {
     this.render();
 
     this.gameView.onCellClick((x, y) => {
-
       this.gameField.toggleCellState(x, y);
       this.render();
     });
 
-    this.gameView.onFieldSizeChange((width, height) => {
+    this.gameView.onClearField(() => {
+      this.gameField.clearField();
+      this.render();
+    });
 
+    this.gameView.onFieldSizeChange((width, height) => {
       this.gameField.setSize(width, height);
       this.render();
     });
@@ -37,11 +40,9 @@ export class Game implements IGame {
           this.render();
         }, this.stepSizeMs);
       }
-
     });
 
     this.gameView.onGameStateChange((newState: boolean) => {
-
       this.isRunning = newState;
 
       if (!newState) {
@@ -68,7 +69,7 @@ export class Game implements IGame {
     this.gameView.updateGameState({
       isRunning: this.isRunning,
       width: state[0].length,
-      height: state.length
+      height: state.length,
     });
   }
 }

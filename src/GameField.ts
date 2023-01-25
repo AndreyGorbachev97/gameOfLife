@@ -2,6 +2,7 @@ import { Cell } from "./types/Cell";
 
 export interface IGameField {
   getState(): Cell[][];
+  clearField(): void;
   toggleCellState(x: number, y: number): void;
   nextGeneration(): boolean;
   setSize(width: number, height: number): void;
@@ -24,6 +25,14 @@ export class GameField implements IGameField {
 
   public getState() {
     return this.field;
+  }
+
+  public clearField() {
+    for (let i = 0; i < this.field.length; i++) {
+      for (let j = 0; j < this.field[0].length; j++) {
+        this.field[i][j] = 0;
+      }
+    }
   }
 
   public toggleCellState(x: number, y: number) {
