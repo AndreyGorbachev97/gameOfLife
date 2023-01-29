@@ -1,10 +1,14 @@
 import { IGameField } from "./GameField";
 import { IGameView } from "./GameView";
+import { ICoord } from "./types/ICoord";
+import { IFieldSize } from "./types/IFieldSize";
 
 export class Game {
   private isRunning = false;
 
   private stepSizeMs = 1;
+
+  private countGeneration = 0;
 
   private timer: ReturnType<typeof setInterval>;
 
@@ -16,23 +20,24 @@ export class Game {
     this.stepSizeMs = stepSizeMs;
     this.render();
 
-    this.gameView.onCellClick((x, y) => {
-      this.gameField.toggleCellState(x, y);
+    this.gameView.onCellClick(({ row, column }: ICoord) => {
+      this.gameField.toggleCellState(row, column);
       this.render();
     });
 
     this.gameView.onClearField(() => {
+      this.countGeneration = 0;
       this.gameField.clearField();
       this.render();
     });
 
-    this.gameView.onFieldSizeChange((width, height) => {
-      this.gameField.setSize(width, height);
+    this.gameView.onFieldSizeChange((fieldSize: IFieldSize) => {
+      this.gameField.setSize(fieldSize.width, fieldSize.height);
       this.render();
     });
 
-    this.gameView.onSpeedChange((speed: number) => {
-      this.stepSizeMs = stepSizeMs / speed;
+    this.gameView.onSpeedChange((speed = 1) => {
+      this.stepSizeMs = stepSizeMs / (+speed || 1);
 
       if (this.isRunning) {
         clearInterval(this.timer);
@@ -49,9 +54,9 @@ export class Game {
       if (!newState) {
         clearInterval(this.timer);
       } else {
-        this.isRunning = !!this.gameField.nextGeneration();
+        this.isRunning = this.gameField.nextGeneration();
         this.timer = setInterval(() => {
-          this.isRunning = !!this.gameField.nextGeneration();
+          this.isRunning = this.gameField.nextGeneration();
 
           if (!this.isRunning) {
             clearInterval(this.timer);
@@ -66,6 +71,12 @@ export class Game {
 
   render() {
     const state = this.gameField.getState();
+
+    if (this.isRunning) {
+      this.countGeneration++;
+      this.gameView.updateCountGeneration(`renders: ${this.countGeneration}`);
+    }
+
     this.gameView.updateGameField(state);
     this.gameView.updateGameState({
       isRunning: this.isRunning,

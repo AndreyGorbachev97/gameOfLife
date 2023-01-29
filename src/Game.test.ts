@@ -42,6 +42,7 @@ describe("Game", () => {
     onClearField: jest.fn((cb) => {
       onClearField = jest.fn(cb);
     }),
+    updateCountGeneration: jest.fn(),
   });
 
   beforeEach(() => {

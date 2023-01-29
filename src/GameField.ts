@@ -10,8 +10,9 @@ export interface IGameField {
 
 export class GameField implements IGameField {
   private field: Cell[][];
-
   private copyField: Cell[][];
+  private prevState: Cell[][];
+  private prevCountLiveCell: number = 0;
 
   constructor(width = 0, height = 1) {
     const result: Cell[][] = [];
@@ -78,6 +79,8 @@ export class GameField implements IGameField {
     let numberLivingCells = 0;
     // копия поля, для того чтобы изменять состояния клеток одновременно
     this.copyField = this.field.map((row) => [...row]);
+    // предыдущее состояние поля
+    this.prevState = this.field.map((row) => [...row]);
 
     for (let i = 0; i < this.field[0].length; i++) {
       for (let j = 0; j < this.field.length; j++) {
@@ -86,8 +89,29 @@ export class GameField implements IGameField {
     }
     this.field = this.copyField;
 
+    if (this.prevCountLiveCell === numberLivingCells) {
+      // проверка на повтор состояния
+      let isPrevCopyField = true;
+      for (let i = 0; i < this.field.length; i++) {
+        if (!isPrevCopyField) {
+          break;
+        }
+        for (let j = 0; j < this.field[i].length; j++) {
+          if (this.prevState[i][j] !== this.field[i][j]) {
+            isPrevCopyField = false;
+            break;
+          }
+        }
+      }
+
+      // если копия поля, возовращаем false и игра остонавливается
+      if (isPrevCopyField) {
+        return false;
+      }
+    }
+
+    this.prevCountLiveCell = numberLivingCells;
     // возвращаем мертвое поле или живое
-    console.log("isRunning", numberLivingCells);
     return !!numberLivingCells;
   }
 
