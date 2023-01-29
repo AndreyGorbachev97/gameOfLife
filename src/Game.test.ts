@@ -42,6 +42,7 @@ describe("Game", () => {
     onClearField: jest.fn((cb) => {
       onClearField = jest.fn(cb);
     }),
+    updateCountGeneration: jest.fn(),
   });
 
   beforeEach(() => {
@@ -78,7 +79,7 @@ describe("Game", () => {
 
     it("calls field.toggleCellState on view.onCellClick and renders with updated state", () => {
       state = [[1, 2, 3]];
-      onCellClick(0, 1);
+      onCellClick({ row: 0, column: 1 });
       expect(gameField.toggleCellState).toHaveBeenCalledWith(0, 1);
       expect(gameView.updateGameField).toHaveBeenCalledWith(state);
     });
@@ -92,7 +93,7 @@ describe("Game", () => {
       ];
       const width = state[0].length;
       const height = state.length;
-      onFieldSizeChange(width, height);
+      onFieldSizeChange({ width, height });
       expect(gameField.setSize).toHaveBeenCalledWith(width, height);
       expect(gameView.updateGameField).toHaveBeenCalledWith(state);
       expect(gameView.updateGameState).toHaveBeenCalledWith(

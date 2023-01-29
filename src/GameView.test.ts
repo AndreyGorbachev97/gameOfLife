@@ -74,13 +74,13 @@ describe("GameView", () => {
           bubbles: true,
         })
       );
-      expect(onCellClick).toHaveBeenCalledWith(0, 1);
+      expect(onCellClick).toHaveBeenCalledWith({ column: 1, row: 0 });
       el.querySelectorAll(".cell.cell--dead")[1].dispatchEvent(
         new Event("click", {
           bubbles: true,
         })
       );
-      expect(onCellClick).toHaveBeenCalledWith(1, 0);
+      expect(onCellClick).toHaveBeenCalledWith({ column: 1, row: 0 });
     });
     it("renders correct game state on .updateGameState", () => {
       expect(
@@ -171,7 +171,10 @@ describe("GameView", () => {
             bubbles: true,
           })
         );
-        expect(onFieldSizeChange).toHaveBeenCalledWith(width, height);
+        expect(onFieldSizeChange).toHaveBeenCalledWith({
+          height: 66,
+          width: 33,
+        });
       });
 
       [
@@ -192,7 +195,7 @@ describe("GameView", () => {
             bubbles: true,
           })
         );
-        expect(onFieldSizeChange).toHaveBeenCalledWith(width, height);
+        expect(onFieldSizeChange).toHaveBeenCalledWith({ width, height });
       });
     });
   });

@@ -1,4 +1,6 @@
 import { Cell } from "./types/Cell";
+import { ICoord } from "./types/ICoord";
+import { IFieldSize } from "./types/IFieldSize";
 
 interface IState {
   width: number;
@@ -8,10 +10,11 @@ interface IState {
 
 export interface IGameView {
   updateGameField: (field: Cell[][]) => void;
+  updateCountGeneration: (count: string) => void;
   updateGameState: (state: IState) => void;
-  onCellClick: (cb: (x: number, y: number) => void) => void;
+  onCellClick: (cb: (coord: ICoord) => void) => void;
   onGameStateChange: (cb: (newState: boolean) => void) => void;
-  onFieldSizeChange: (cb: (width: number, height: number) => void) => void;
+  onFieldSizeChange: (cb: (fieldSize: IFieldSize) => void) => void;
   onSpeedChange: (cb: (speed: number) => void) => void;
   onClearField: (cb: () => void) => void;
 }
@@ -21,25 +24,30 @@ export class GameView implements IGameView {
 
   private isRunning = false;
 
-  private gameStateChangeHandler!: (newState: boolean) => void;
+  private gameStateChangeHandler: (newState: boolean) => void;
 
-  private onFieldSizeChangeHandler!: (width: number, height: number) => void;
+  private onFieldSizeChangeHandler: (fieldSize: IFieldSize) => void;
 
-  private gameSpeedChangeHandler!: (speed: number | null) => void;
+  private gameSpeedChangeHandler: (speed: number) => void;
 
-  private gameClearFieldHandler!: () => void;
+  private gameClearFieldHandler: () => void;
 
   private cellContainer: HTMLDivElement = document.createElement("div");
+  private gameControlsView: HTMLDivElement = document.createElement("div");
 
   // private cellClickHandler: (x: number, y: number) => void;
   constructor(el: HTMLElement) {
     const gameFieldView = document.createElement("div");
-    const gameControlsView = document.createElement("div");
+    this.gameControlsView = document.createElement("div");
     const buttonStopped = document.createElement("button");
     const buttonClear = document.createElement("button");
 
+    const countGeneration = document.createElement("div");
+    countGeneration.className = "generation";
+    countGeneration.innerHTML = "0";
+
     gameFieldView.className = "gameField";
-    gameControlsView.className = "gameControls";
+    this.gameControlsView.className = "gameControls";
 
     buttonStopped.classList.add("btn");
     buttonStopped.classList.add("run-button");
@@ -67,7 +75,7 @@ export class GameView implements IGameView {
     const inputRange = document.createElement("input");
     // todo не знаю как типизировать event
     inputRange.addEventListener("change", (e: any) => {
-      this.gameSpeedChangeHandler(e.target.value);
+      this.gameSpeedChangeHandler(+(e.target as HTMLInputElement).value);
     });
 
     const inputWidth = document.createElement("input");
@@ -90,26 +98,32 @@ export class GameView implements IGameView {
         if (!this.onFieldSizeChangeHandler) {
           return;
         }
-        this.onFieldSizeChangeHandler(
-          Number(inputWidth.value),
-          Number(inputHeight.value)
-        );
+        this.onFieldSizeChangeHandler({
+          width: Number(inputWidth.value),
+          height: Number(inputHeight.value),
+        });
       });
     });
 
     this.cellContainer.classList.add("cell-container");
     gameFieldView.append(this.cellContainer);
 
-    gameControlsView.append(buttonStopped);
-    gameControlsView.append(buttonClear);
-    gameControlsView.append(inputWidth);
-    gameControlsView.append(inputHeight);
-    gameControlsView.append(inputRange);
+    this.gameControlsView.append(buttonStopped);
+    this.gameControlsView.append(buttonClear);
+    this.gameControlsView.append(inputWidth);
+    this.gameControlsView.append(inputHeight);
+    this.gameControlsView.append(inputRange);
+    this.gameControlsView.append(countGeneration);
 
-    el.append(gameControlsView);
+    el.append(this.gameControlsView);
     el.append(gameFieldView);
 
     this.htmlElement = el;
+  }
+
+  updateCountGeneration(count: string) {
+    const countGeneration = this.gameControlsView.querySelector(".generation");
+    countGeneration.innerHTML = count;
   }
 
   updateGameField(field: Cell[][]) {
@@ -166,7 +180,7 @@ export class GameView implements IGameView {
     }
   }
 
-  public onCellClick(cb: (x: number, y: number) => void) {
+  public onCellClick(cb: (coord: ICoord) => void) {
     this.htmlElement.addEventListener("click", (ev) => {
       const target = ev.target as HTMLElement;
       if (!(target as HTMLElement).matches(".cell")) {
@@ -174,7 +188,7 @@ export class GameView implements IGameView {
       }
       const x = Number(target.getAttribute("data-x"));
       const y = Number(target.getAttribute("data-y"));
-      cb(x, y);
+      cb({ row: x, column: y });
     });
   }
 
@@ -190,7 +204,7 @@ export class GameView implements IGameView {
     this.gameClearFieldHandler = cb;
   }
 
-  public onFieldSizeChange(cb: (width: number, height: number) => void) {
+  public onFieldSizeChange(cb: (fieldSize: IFieldSize) => void) {
     this.onFieldSizeChangeHandler = cb;
   }
 }
