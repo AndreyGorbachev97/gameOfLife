@@ -10,9 +10,12 @@ export interface IGameField {
 
 export class GameField implements IGameField {
   private field: Cell[][];
+
   private copyField: Cell[][];
+
   private prevState: Cell[][];
-  private prevCountLiveCell: number = 0;
+
+  private prevCountLiveCell: number;
 
   constructor(width = 0, height = 1) {
     const result: Cell[][] = [];
@@ -30,6 +33,7 @@ export class GameField implements IGameField {
     return this.field;
   }
 
+  
   public clearField() {
     for (let i = 0; i < this.field.length; i++) {
       for (let j = 0; j < this.field[0].length; j++) {
