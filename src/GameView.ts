@@ -33,6 +33,7 @@ export class GameView implements IGameView {
   private gameClearFieldHandler: () => void;
 
   private cellContainer: HTMLDivElement = document.createElement("div");
+
   private gameControlsView: HTMLDivElement = document.createElement("div");
 
   // private cellClickHandler: (x: number, y: number) => void;
