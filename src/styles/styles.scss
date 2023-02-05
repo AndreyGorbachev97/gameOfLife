@@ -1,0 +1,26 @@
+@import "fonts";
+@import "blocks/cell.scss";
+@import "blocks/gameControls.scss";
+@import "blocks/gameField.scss";
+@import "blocks/input.scss";
+@import "blocks/btn.scss";
+
+body {
+  font-family: sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 30px;
+}
+
+.container {
+  max-width: 1080px;
+  display: flex;
+  margin: 0 auto;
+}
+
+.app {
+  width: 100%;
+  padding-top: 32px;
+}
